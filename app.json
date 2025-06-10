@@ -1,0 +1,45 @@
+{
+  "expo": {
+    "name": "Lucid Dreaming MILD",
+    "slug": "lucid-dreaming-app",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/icon.png",
+    "scheme": "luciddreaming",
+    "userInterfaceStyle": "automatic",
+    "splash": {
+      "image": "./assets/images/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#121063"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.yourcompany.luciddreaming"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "backgroundColor": "#121063"
+      },
+      "package": "com.yourcompany.luciddreaming"
+    },
+    "web": {
+      "bundler": "metro",
+      "favicon": "./assets/images/favicon.png"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-notifications"
+    ],
+    "jsEngine": "jsc",
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "5c7e0b19-40a5-492f-a104-5995ecb10215"
+      }
+    }
+  }
+}
