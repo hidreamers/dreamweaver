@@ -1,10 +1,22 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, FlatList, Alert, Switch, Button } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+  Switch,
+  Alert,
+  Modal,
+  SafeAreaView,
+  Platform,
+} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import * as Notifications from 'expo-notifications';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useRealityCheckStore } from '../../store/realityCheckStore';
-import { useSettings } from '../../store/settingsStore';
+import ScreenSaver from '../../components/ScreenSaver';
 
+// Reality check types
 const realityCheckTypes = [
   {
     id: '1',
@@ -33,7 +45,7 @@ const realityCheckTypes = [
   {
     id: '5',
     name: 'Light Switch Check',
-    description: 'Flip a light switch. In dreams, light switches often don\'t work properly.',
+    description: "Flip a light switch. In dreams, light switches often don't work properly.",
     icon: 'bulb',
   },
   {
@@ -44,126 +56,207 @@ const realityCheckTypes = [
   },
 ];
 
-export default function RealityChecksScreen() {
-  const { realityChecks, addRealityCheck } = useRealityCheckStore();
-  const { settings } = useSettings();
-  const [selectedCheck, setSelectedCheck] = useState<string | null>(null);
-  const [remindersOn, setRemindersOn] = useState(false);
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+export default function IndexScreen() {
+  const [reminderOn, setReminderOn] = useState(false);
+  const [screenSaverVisible, setScreenSaverVisible] = useState(false);
+  const [countdown, setCountdown] = useState(null);
+  const intervalRef = useRef(null);
+  const timerRef = useRef(null);
 
-  // Function to trigger the reminder (popup only)
-  const triggerReminder = () => {
-    Alert.alert('Reality Check', 'Do a reality check now!');
+  // Notification handler and Android channel
+  useEffect(() => {
+    Notifications.setNotificationHandler({
+      handleNotification: async () => ({
+        shouldShowAlert: true,
+        shouldPlaySound: false,
+        shouldSetBadge: false,
+      }),
+    });
+
+    (async () => {
+      const { status } = await Notifications.requestPermissionsAsync();
+      if (status !== 'granted') {
+        Alert.alert('Permission required', 'Please enable notifications in settings.');
+      }
+    })();
+
+    if (Platform.OS === 'android') {
+      Notifications.setNotificationChannelAsync('default', {
+        name: 'default',
+        importance: Notifications.AndroidImportance.DEFAULT,
+      });
+    }
+  }, []);
+
+  // Schedule a local notification for Reality Check
+  const scheduleRealityCheckNotification = async () => {
+    await Notifications.scheduleNotificationAsync({
+      content: {
+        title: 'Reality Check',
+        body: 'Ask yourself: Am I dreaming?',
+        channelId: 'default', // Required for Android
+      },
+      trigger: { seconds: 2 }, // 2 seconds from now
+    });
   };
 
-  // Start/stop reminders every 2 hours
+  // In-app popup reminder every 2 hours (and notification)
   useEffect(() => {
-    if (remindersOn) {
-      triggerReminder(); // Immediate first reminder
-      intervalRef.current = setInterval(triggerReminder, 7200000); // 2 hours
-    } else if (intervalRef.current) {
-      clearInterval(intervalRef.current);
+    if (reminderOn) {
+      scheduleRealityCheckNotification();
+      setCountdown(2 * 60 * 60); // 2 hours in seconds
+      intervalRef.current = setInterval(() => {
+        scheduleRealityCheckNotification();
+        setCountdown(2 * 60 * 60);
+      }, 2 * 60 * 60 * 1000); // 2 hours
+      timerRef.current = setInterval(() => {
+        setCountdown(prev => (prev > 0 ? prev - 1 : 2 * 60 * 60));
+      }, 1000);
+    } else {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+      if (timerRef.current) clearInterval(timerRef.current);
       intervalRef.current = null;
+      timerRef.current = null;
+      setCountdown(null);
     }
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current);
+      if (timerRef.current) clearInterval(timerRef.current);
     };
-  }, [remindersOn]);
+  }, [reminderOn]);
 
-  // Perform a reality check
-  const performRealityCheck = (checkId: string) => {
-    setSelectedCheck(checkId);
-    const check = realityCheckTypes.find(c => c.id === checkId);
-    if (!check) return;
-    const newCheck = {
-      id: Date.now().toString(),
-      name: check.name,
-      description: check.description,
-      completed: true,
-      timestamp: new Date().toISOString(),
+  // Also run reminders while screensaver is active
+  useEffect(() => {
+    if (screenSaverVisible && reminderOn) {
+      scheduleRealityCheckNotification();
+      if (!intervalRef.current) {
+        intervalRef.current = setInterval(() => {
+          scheduleRealityCheckNotification();
+          setCountdown(2 * 60 * 60);
+        }, 2 * 60 * 60 * 1000);
+      }
+      if (!timerRef.current) {
+        timerRef.current = setInterval(() => {
+          setCountdown(prev => (prev > 0 ? prev - 1 : 2 * 60 * 60));
+        }, 1000);
+      }
+    } else if (!screenSaverVisible && (!reminderOn || !screenSaverVisible)) {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+      if (timerRef.current) clearInterval(timerRef.current);
+      intervalRef.current = null;
+      timerRef.current = null;
+    }
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+      if (timerRef.current) clearInterval(timerRef.current);
     };
-    addRealityCheck(newCheck);
-    setTimeout(() => {
-      setSelectedCheck(null);
-      Alert.alert(
-        'Reality Check Complete',
-        'Remember to ask yourself: "Am I dreaming?" and really consider the possibility.',
-        [{ text: 'OK' }]
-      );
-    }, 2000);
+  }, [screenSaverVisible, reminderOn]);
+
+  // Format seconds as hh:mm:ss or mm:ss
+  const formatCountdown = (seconds) => {
+    if (seconds === null) return '--:--';
+    const h = Math.floor(seconds / 3600);
+    const m = Math.floor((seconds % 3600) / 60);
+    const s = seconds % 60;
+    return h > 0
+      ? `${h}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`
+      : `${m}:${s.toString().padStart(2, '0')}`;
   };
 
-  // Render a reality check item
-  const renderRealityCheck = ({ item }: { item: typeof realityCheckTypes[0] }) => (
-    <TouchableOpacity
-      style={[
-        styles.checkItem,
-        selectedCheck === item.id && styles.selectedCheck
-      ]}
-      onPress={() => performRealityCheck(item.id)}
-    >
-      <View style={styles.checkIconContainer}>
-        <Ionicons name={item.icon as any} size={28} color="#3a1c71" />
-      </View>
-      <View style={styles.checkContent}>
-        <Text style={styles.checkName}>{item.name}</Text>
-        <Text style={styles.checkDescription}>{item.description}</Text>
-      </View>
-      <Ionicons name="chevron-forward" size={24} color="#ccc" />
-    </TouchableOpacity>
-  );
+  // Perform a reality check (show alert and notification)
+  const performRealityCheck = (check) => {
+    Alert.alert(
+      check.name,
+      check.description + '\n\nAsk yourself: "Am I dreaming?"',
+      [{ text: 'OK' }]
+    );
+    scheduleRealityCheckNotification();
+  };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#1a1646' }}>
       <LinearGradient
-        colors={['#3a1c71', '#d76d77', '#ffaf7b']}
+        colors={['#ffaf7b', '#d76d77', '#3a1c71']}
         style={styles.header}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
       >
         <Text style={styles.headerTitle}>Reality Checks</Text>
-        <Text style={styles.headerSubtitle}>Train your mind to recognize dreams</Text>
-      </LinearGradient>
-
-      <View style={styles.reminderContainer}>
-        <Text style={styles.reminderTitle}>Automated Reality Check Reminders</Text>
-        <Text style={styles.reminderDescription}>
-          You will receive a reality check reminder every 2 hours automatically.
+        <Text style={styles.headerSubtitle}>
+          Practice these reality checks throughout your day to increase your chances of lucid dreaming!
         </Text>
-        <View style={{ alignItems: 'center', marginTop: 8 }}>
-          <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 16 }}>
-            <Text style={{ fontSize: 16, color: '#3a1c71', fontWeight: 'bold', marginRight: 12 }}>
-              Reminders
-            </Text>
+      </LinearGradient>
+      <ScrollView contentContainerStyle={styles.container}>
+        <View style={styles.card}>
+          <Ionicons name="eye" size={44} color="#d76d77" style={{ marginBottom: 10 }} />
+          <Text style={styles.cardTitle}>Automated Reality Check Reminders</Text>
+          <Text style={styles.cardText}>
+            You will receive a reality check notification every 2 hours while reminders are enabled.
+          </Text>
+          <View style={styles.row}>
+            <Text style={styles.label}>Reminders</Text>
             <Switch
-              value={remindersOn}
-              onValueChange={setRemindersOn}
-              trackColor={{ false: '#d1d1d1', true: '#d76d77' }}
-              thumbColor={remindersOn ? '#3a1c71' : '#f4f3f4'}
+              value={reminderOn}
+              onValueChange={setReminderOn}
+              trackColor={{ false: '#d1c4e9', true: '#d76d77' }}
+              thumbColor={reminderOn ? '#fff' : '#3a1c71'}
             />
           </View>
-          <Button
-            title="Test Reminder"
-            onPress={triggerReminder}
-            color="#d76d77"
-          />
+          <Text style={styles.countdown}>
+            Next Reality Check in: {formatCountdown(countdown)}
+          </Text>
+          <TouchableOpacity
+            style={styles.testButton}
+            onPress={() => {
+              Alert.alert('Reality Check', 'Ask yourself: Am I dreaming?');
+              scheduleRealityCheckNotification();
+            }}
+          >
+            <Ionicons name="flask" size={20} color="#fff" style={{ marginRight: 8 }} />
+            <Text style={styles.testButtonText}>Test Reality Check</Text>
+          </TouchableOpacity>
         </View>
-      </View>
 
-      <Text style={styles.sectionTitle}>Choose a Reality Check</Text>
-      <FlatList
-        data={realityCheckTypes}
-        renderItem={renderRealityCheck}
-        keyExtractor={item => item.id}
-        contentContainerStyle={styles.listContainer}
-      />
-    </View>
+        <Text style={styles.sectionTitle}>Reality Check Cards</Text>
+        {realityCheckTypes.map((check) => (
+          <TouchableOpacity
+            key={check.id}
+            style={styles.checkItem}
+            onPress={() => performRealityCheck(check)}
+          >
+            <View style={styles.checkIconContainer}>
+              <Ionicons name={check.icon} size={28} color="#3a1c71" />
+            </View>
+            <View style={styles.checkContent}>
+              <Text style={styles.checkName}>{check.name}</Text>
+              <Text style={styles.checkDescription}>{check.description}</Text>
+            </View>
+            <Ionicons name="chevron-forward" size={24} color="#ccc" />
+          </TouchableOpacity>
+        ))}
+
+        <View style={styles.infoCard}>
+          <Text style={styles.infoTitle}>Keep Your App Awake</Text>
+          <Text style={styles.infoText}>
+            To keep reminders working, activate the screensaver below. This will keep your phone awake and notifications will continue.
+          </Text>
+          <TouchableOpacity
+            style={styles.screensaverButton}
+            onPress={() => setScreenSaverVisible(true)}
+          >
+            <Ionicons name="planet" size={22} color="#fff" style={{ marginRight: 8 }} />
+            <Text style={styles.screensaverButtonText}>Activate Screensaver</Text>
+          </TouchableOpacity>
+        </View>
+        <Modal visible={screenSaverVisible} animationType="fade" transparent={false}>
+          <ScreenSaver onExit={() => setScreenSaverVisible(false)} />
+        </Modal>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#f8f9fa',
-  },
   header: {
     paddingTop: 60,
     paddingBottom: 30,
@@ -172,26 +265,74 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 20,
   },
   headerTitle: {
-    fontSize: 22,
+    fontSize: 28,
     fontWeight: 'bold',
-    color: 'white',
+    color: '#fff',
+    marginBottom: 10,
     textAlign: 'center',
+    textShadowColor: '#3a1c71',
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 8,
   },
   headerSubtitle: {
     fontSize: 16,
-    color: 'rgba(255, 255, 255, 0.8)',
+    color: '#d1c4e9',
+    marginBottom: 18,
     textAlign: 'center',
-    marginTop: 5,
+  },
+  container: {
+    padding: 20,
+    paddingBottom: 40,
+  },
+  card: {
+    backgroundColor: '#fff',
+    borderRadius: 18,
+    padding: 24,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.13,
+    shadowRadius: 12,
+    elevation: 4,
+    marginBottom: 18,
+  },
+  cardTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#3a1c71',
+    marginBottom: 8,
+    textAlign: 'center',
+  },
+  cardText: {
+    fontSize: 16,
+    color: '#555',
+    marginBottom: 16,
+    textAlign: 'center',
+  },
+  row: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  label: {
+    fontSize: 16,
+    color: '#3a1c71',
+    fontWeight: 'bold',
+    marginRight: 10,
+  },
+  countdown: {
+    color: '#d76d77',
+    fontWeight: 'bold',
+    fontSize: 16,
+    marginTop: 10,
   },
   sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    marginHorizontal: 16,
     marginBottom: 10,
-    color: '#333',
-  },
-  listContainer: {
-    paddingHorizontal: 16,
+    color: '#fff',
+    marginTop: 10,
+    textAlign: 'center',
   },
   checkItem: {
     flexDirection: 'row',
@@ -205,11 +346,6 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
     shadowRadius: 2,
-  },
-  selectedCheck: {
-    backgroundColor: '#f0e6ff',
-    borderColor: '#3a1c71',
-    borderWidth: 1,
   },
   checkIconContainer: {
     width: 50,
@@ -237,7 +373,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#f0e6ff',
     borderRadius: 12,
     padding: 16,
-    margin: 16,
+    marginTop: 18,
+    marginBottom: 30,
+    alignItems: 'center',
   },
   infoTitle: {
     fontSize: 14,
@@ -246,30 +384,40 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   infoText: {
-    fontSize: 12,
+    fontSize: 13,
     color: '#555',
     lineHeight: 18,
+    textAlign: 'center',
+    marginBottom: 12,
   },
-  reminderContainer: {
-    backgroundColor: 'white',
-    borderRadius: 12,
-    padding: 16,
-    margin: 16,
-    elevation: 3,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
+  screensaverButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#3a1c71',
+    paddingVertical: 10,
+    paddingHorizontal: 18,
+    borderRadius: 8,
+    alignSelf: 'center',
+    marginTop: 8,
   },
-  reminderTitle: {
-    fontSize: 16,
+  screensaverButtonText: {
+    color: '#fff',
     fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 8,
+    fontSize: 16,
   },
-  reminderDescription: {
-    fontSize: 14,
-    color: '#666',
-    marginBottom: 16,
+  testButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#d76d77',
+    paddingVertical: 10,
+    paddingHorizontal: 18,
+    borderRadius: 8,
+    alignSelf: 'center',
+    marginTop: 18,
+  },
+  testButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 16,
   },
 });

@@ -5,6 +5,7 @@ import { FontAwesome } from '@expo/vector-icons';
 import Colors from '../constants/Colors';
 import { Dream } from '../types';
 import { format } from 'date-fns';
+import { removeStopWords } from '../utils/stopWordFilter';
 
 type DreamCardProps = {
   dream: Dream;
@@ -13,7 +14,8 @@ type DreamCardProps = {
 
 export default function DreamCard({ dream, onPress }: DreamCardProps) {
   const colorScheme = useColorScheme() ?? 'light';
-  
+  const filteredDescription = removeStopWords(dream.description);
+
   return (
     <TouchableOpacity 
       style={[
@@ -41,6 +43,7 @@ export default function DreamCard({ dream, onPress }: DreamCardProps) {
       
       <Text style={styles.title} numberOfLines={1}>{dream.title}</Text>
       <Text style={styles.description} numberOfLines={2}>{dream.description}</Text>
+      <Text style={styles.keywords} numberOfLines={1}>Keywords: {filteredDescription}</Text>
       
       <View style={styles.footer} lightColor="transparent" darkColor="transparent">
         {dream.tags.map((tag, index) => (
@@ -97,6 +100,11 @@ const styles = StyleSheet.create({
   description: {
     fontSize: 14,
     opacity: 0.8,
+    marginBottom: 12,
+  },
+  keywords: {
+    fontSize: 14,
+    fontWeight: 'bold',
     marginBottom: 12,
   },
   footer: {

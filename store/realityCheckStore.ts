@@ -1,5 +1,4 @@
 import { create } from 'zustand';
-import * as Notifications from 'expo-notifications';
 
 export interface RealityCheck {
   id: string;

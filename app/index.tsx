@@ -6,7 +6,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import * as Notifications from 'expo-notifications';
 import { useKeepAwake } from 'expo-keep-awake';
-import ScreenSaver from '../../components/ScreenSaver';
+import ScreenSaver from '../components/ScreenSaver';
 
 // Remote audio files
 const nightAudio = { uri: 'https://www.hidreamers.com/wp-content/uploads/2025/06/notification.mp3' };
@@ -348,6 +348,13 @@ export default function TabIndex() {
           </View>
         )}
       </View>
+
+      {/* First image below the header */}
+      <Image
+        source={{ uri: 'https://www.hidreamers.com/wp-content/uploads/2025/05/ChatGPT-Image-May-6-2025-12_39_55-PM.png' }}
+        style={styles.largeImage}
+        resizeMode="contain"
+      />
 
       {/* Dropdown Navigation */}
       <View style={styles.dropdownContainer}>

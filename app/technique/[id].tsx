@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { StyleSheet, ScrollView, useColorScheme, Image } from 'react-native';
-import { Text, View, TouchableOpacity } from '../../components/Themed';
+import { Text, View } from '../../components/Themed';
+import { TouchableOpacity } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 import Colors from '../../constants/Colors';
 import { useLocalSearchParams, router } from 'expo-router';

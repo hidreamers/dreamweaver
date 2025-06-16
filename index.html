@@ -121,7 +121,33 @@
       <p>Wake up after 5-6 hours of sleep, stay awake briefly, then return to sleep.</p>
     </div>
     
-    <button class="button">Start MILD Practice</button>
+    <button class="button" id="notifyBtn">Start MILD Practice</button>
   </div>
+
+  <script>
+    // Browser notification example
+    document.getElementById('notifyBtn').onclick = function() {
+      if ("Notification" in window) {
+        if (Notification.permission === "granted") {
+          new Notification("Lucid Dreaming", { body: "Time to practice MILD!" });
+        } else if (Notification.permission !== "denied") {
+          Notification.requestPermission().then(function (permission) {
+            if (permission === "granted") {
+              new Notification("Lucid Dreaming", { body: "Time to practice MILD!" });              new Notification("Lucid Dreaming", { body: "Time to practice MILD!" });
+
+
+
+
+
+
+
+
+
+</html></body>  </script>    };      }        }          });            }            }
+          });
+        }
+      }
+    };
+  </script>
 </body>
 </html>

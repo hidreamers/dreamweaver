@@ -5,6 +5,8 @@ import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import { useColorScheme } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { Tabs } from 'expo-router';
 
 export {
   ErrorBoundary,
@@ -52,5 +54,24 @@ function RootLayoutNav() {
         <Stack.Screen name="technique/[id]" options={{ headerShown: false }} />
       </Stack>
     </ThemeProvider>
+  );
+}
+
+export function TabLayout() {
+  return (
+    <Tabs
+      screenOptions={({ route }) => ({
+        tabBarActiveTintColor: '#3a1c71',
+        tabBarInactiveTintColor: '#888',
+        headerShown: false,
+        tabBarIcon: ({ color, size }) => {
+          let iconName = 'ellipse-outline';
+          if (route.name === 'index') iconName = 'home-outline';
+          else if (route.name === 'Meditations') iconName = 'musical-notes-outline';
+          else if (route.name === 'RealityChecks') iconName = 'eye-outline';
+          return <Ionicons name={iconName} size={size} color={color} />;
+        },
+      })}
+    />
   );
 }
