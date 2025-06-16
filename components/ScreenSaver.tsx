@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Dimensions, Animated, Appearance } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useKeepAwake } from 'expo-keep-awake';
+import { LinearGradient } from 'expo-linear-gradient';
+import React, { useEffect, useState } from 'react';
+import { Animated, Appearance, Dimensions, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 const { width, height } = Dimensions.get('window');
 
@@ -57,7 +57,7 @@ export default function ScreenSaver({ onExit }: { onExit: () => void }) {
       : ['#3a1c71', '#d76d77', '#ffaf7b', '#fff'];
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={styles.container}>
       <LinearGradient
         colors={gradientColors}
         style={StyleSheet.absoluteFill}
@@ -131,6 +131,12 @@ export default function ScreenSaver({ onExit }: { onExit: () => void }) {
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#222',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   centered: {
     flex: 1,
     alignItems: 'center',
