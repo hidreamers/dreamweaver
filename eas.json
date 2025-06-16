@@ -1,14 +1,18 @@
 {
+<<<<<<< HEAD
   "cli": {
     "version": ">= 16.10.1",
     "appVersionSource": "remote"
   },
+=======
+>>>>>>> beb1985905716938e1f6a231cd3b46ce6d0bb5b2
   "build": {
     "development": {
       "developmentClient": true,
       "distribution": "internal"
     },
     "preview": {
+<<<<<<< HEAD
       "distribution": "internal"
     },
     "production": {
@@ -16,6 +20,13 @@
     }
   },
   "submit": {
+=======
+      "distribution": "internal",
+      "android": {
+        "buildType": "apk"
+      }
+    },
+>>>>>>> beb1985905716938e1f6a231cd3b46ce6d0bb5b2
     "production": {}
   }
 }

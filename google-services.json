@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "528383123772",
+    "firebase_url": "https://lucid-dreaming-assistant-default-rtdb.firebaseio.com",
+    "project_id": "lucid-dreaming-assistant",
+    "storage_bucket": "lucid-dreaming-assistant.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:528383123772:android:5d47eb48cda54f18c47e39",
+        "android_client_info": {
+          "package_name": "com.yourcompany.luciddreaming"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "528383123772-mk5na08oddk1lphll63mrgf0qa1ppihv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBOMq71Yl4-OrO84vA28DhzJHXfL5Re-Uo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "528383123772-mk5na08oddk1lphll63mrgf0qa1ppihv.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

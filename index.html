@@ -124,6 +124,7 @@
     <button class="button" id="notifyBtn">Start MILD Practice</button>
   </div>
 
+<<<<<<< HEAD
   <audio id="mildSound" src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" preload="auto"></audio>
 
   <script>
@@ -133,14 +134,33 @@
       document.getElementById('mildSound').play();
 
       // Notification logic
+=======
+  <script>
+    // Browser notification example
+    document.getElementById('notifyBtn').onclick = function() {
+>>>>>>> beb1985905716938e1f6a231cd3b46ce6d0bb5b2
       if ("Notification" in window) {
         if (Notification.permission === "granted") {
           new Notification("Lucid Dreaming", { body: "Time to practice MILD!" });
         } else if (Notification.permission !== "denied") {
           Notification.requestPermission().then(function (permission) {
             if (permission === "granted") {
+<<<<<<< HEAD
               new Notification("Lucid Dreaming", { body: "Time to practice MILD!" });
             }
+=======
+              new Notification("Lucid Dreaming", { body: "Time to practice MILD!" });              new Notification("Lucid Dreaming", { body: "Time to practice MILD!" });
+
+
+
+
+
+
+
+
+
+</html></body>  </script>    };      }        }          });            }            }
+>>>>>>> beb1985905716938e1f6a231cd3b46ce6d0bb5b2
           });
         }
       }

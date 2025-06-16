@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD
   "name": "dreamweaver",
   "main": "expo-router/entry",
   "version": "1.0.0",
@@ -34,10 +35,48 @@
     "expo-symbols": "~0.4.5",
     "expo-system-ui": "~5.0.8",
     "expo-web-browser": "~14.1.6",
+=======
+  "name": "lucid-dreaming-app",
+  "version": "1.0.0",
+  "main": "expo-router/entry",
+  "scripts": {
+    "start": "expo start",
+    "android": "expo run:android",
+    "ios": "expo run:ios",
+    "web": "expo start --web"
+  },
+  "dependencies": {
+    "@expo/vector-icons": "^14.1.0",
+    "@react-native-async-storage/async-storage": "2.1.2",
+    "@react-native-community/datetimepicker": "8.3.0",
+    "@react-native-community/slider": "4.5.6",
+    "date-fns": "^4.1.0",
+    "eas-cli": "^16.9.0",
+    "expo": "^53.0.11",
+    "expo-application": "~6.1.4",
+    "expo-asset": "~11.1.5",
+    "expo-av": "~15.1.6",
+    "expo-constants": "~17.1.6",
+    "expo-dev-client": "~5.2.0",
+    "expo-device": "~7.1.4",
+    "expo-font": "~13.3.1",
+    "expo-haptics": "^14.1.4",
+    "expo-keep-awake": "~14.1.4",
+    "expo-linear-gradient": "~14.1.5",
+    "expo-linking": "~7.1.5",
+    "expo-notifications": "~0.31.3",
+    "expo-router": "~5.0.7",
+    "expo-splash-screen": "~0.30.9",
+    "expo-sqlite": "~15.2.12",
+    "expo-status-bar": "~2.2.3",
+    "expo-system-ui": "~5.0.8",
+    "firebase": "^11.9.0",
+>>>>>>> beb1985905716938e1f6a231cd3b46ce6d0bb5b2
     "react": "19.0.0",
     "react-dom": "19.0.0",
     "react-native": "0.79.3",
     "react-native-gesture-handler": "~2.24.0",
+<<<<<<< HEAD
     "react-native-reanimated": "~3.17.4",
     "react-native-safe-area-context": "5.4.0",
     "react-native-screens": "~4.11.1",
@@ -53,6 +92,20 @@
     "eslint": "^9.25.0",
     "eslint-config-expo": "~9.2.0",
     "typescript": "~5.8.3"
+=======
+    "react-native-safe-area-context": "5.4.0",
+    "react-native-screens": "~4.11.1",
+    "react-native-web": "^0.20.0",
+    "react-native-webview": "13.13.5",
+    "react-native-youtube-iframe": "^2.3.0",
+    "zustand": "^4.4.1",
+    "expo-web-browser": "~14.1.6"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.20.0",
+    "@types/react": "~19.0.10",
+    "typescript": "^5.1.3"
+>>>>>>> beb1985905716938e1f6a231cd3b46ce6d0bb5b2
   },
   "private": true
 }

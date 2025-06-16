@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { Ionicons } from '@expo/vector-icons';
 import { Audio } from 'expo-av';
 import { useKeepAwake } from 'expo-keep-awake';
@@ -6,6 +7,16 @@ import * as Notifications from 'expo-notifications';
 import { router } from 'expo-router';
 import React, { useEffect, useRef, useState } from 'react';
 import { Alert, Image, Modal, Platform, ScrollView, StyleSheet, Switch, Text, TouchableOpacity, View } from 'react-native';
+=======
+import React, { useEffect, useRef, useState } from 'react';
+import { View, Text, Switch, StyleSheet, Alert, ScrollView, Image, Modal, TouchableOpacity, Platform } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { Audio } from 'expo-av';
+import { LinearGradient } from 'expo-linear-gradient';
+import { router } from 'expo-router';
+import * as Notifications from 'expo-notifications';
+import { useKeepAwake } from 'expo-keep-awake';
+>>>>>>> beb1985905716938e1f6a231cd3b46ce6d0bb5b2
 import ScreenSaver from '../../components/ScreenSaver';
 
 // Remote audio files
@@ -458,12 +469,15 @@ export default function TabIndex() {
       <Modal visible={screenSaverVisible} animationType="fade" transparent={false}>
         <ScreenSaver onExit={() => setScreenSaverVisible(false)} />
       </Modal>
+<<<<<<< HEAD
 
       {/* Splash Image */}
       <Image
         source={require('../../assets/images/splash-icon.png')}
         style={{ width: 100, height: 100 }}
       />
+=======
+>>>>>>> beb1985905716938e1f6a231cd3b46ce6d0bb5b2
     </ScrollView>
   );
 }

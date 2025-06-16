@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Learn more https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files
 
 # dependencies
@@ -37,3 +38,8 @@ yarn-error.*
 *.tsbuildinfo
 
 app-example
+=======
+node_modules
+android
+ios
+>>>>>>> beb1985905716938e1f6a231cd3b46ce6d0bb5b2

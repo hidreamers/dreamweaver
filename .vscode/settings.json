@@ -1,7 +1,12 @@
 {
+<<<<<<< HEAD
   "editor.codeActionsOnSave": {
     "source.fixAll": "explicit",
     "source.organizeImports": "explicit",
     "source.sortMembers": "explicit"
   }
 }
+=======
+    "CodeGPT.apiKey": "CodeGPT Plus Beta"
+}
+>>>>>>> beb1985905716938e1f6a231cd3b46ce6d0bb5b2

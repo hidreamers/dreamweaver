@@ -1,5 +1,6 @@
 {
   "expo": {
+<<<<<<< HEAD
     "name": "dreamweaver",
     "slug": "dreamweaver",
     "version": "1.0.0",
@@ -8,12 +9,36 @@
     "scheme": "dreamweaver",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
+=======
+    "name": "lucid-dreaming-app",
+    "slug": "lucid-dreaming-",
+    "version": "1.0.0",
+    "sdkVersion": "50.0.0",
+    "platforms": [
+      "ios",
+      "android"
+    ],
+    "orientation": "portrait",
+    "icon": "./assets/images/icon.png",
+    "splash": {
+      "image": "./assets/images/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "updates": {
+      "fallbackToCacheTimeout": 0
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+>>>>>>> beb1985905716938e1f6a231cd3b46ce6d0bb5b2
     "ios": {
       "supportsTablet": true
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
+<<<<<<< HEAD
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
@@ -49,5 +74,19 @@
     "splash": {
       "image": "./assets/images/splash-icon.png"
     }
+=======
+        "backgroundColor": "#FFFFFF"
+      },
+      "package": "com.hidreamers.luciddreaming"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "6abdec2d-1d48-49ce-9463-2a4599e8459b"
+      }
+    }
+  },
+  "cli": {
+    "appVersionSource": "appVersion"
+>>>>>>> beb1985905716938e1f6a231cd3b46ce6d0bb5b2
   }
 }
